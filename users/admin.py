@@ -8,7 +8,19 @@ class CustomUsersAdmin(UserAdmin):
     fieldsets = (
         (
             "Profile",
-            {"fields": ("username", "password", "name", "email", "is_host")},
+            {
+                "fields": (
+                    "profile_photo",
+                    "username",
+                    "password",
+                    "name",
+                    "email",
+                    "is_host",
+                    "gender",
+                    "language",
+                    "cueerncy",
+                )
+            },
         ),
     )
     list_display = ("username", "email", "is_host")
