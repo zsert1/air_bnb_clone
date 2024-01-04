@@ -14,6 +14,8 @@ class ExperiencesAdmin(admin.ModelAdmin):
         "created",
     )
 
+    list_filter = ("category",)
+
 
 @admin.register(Perk)
 class PerkAdmin(admin.ModelAdmin):
