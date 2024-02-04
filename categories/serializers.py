@@ -11,6 +11,9 @@ class CategorySerializer(serializers.ModelSerializer):
         #     "kind",
         # )
         # 모든것 보여줄때
-        fields = "__all__"
+        fields = (
+            "name",
+            "kind",
+        )
         #  보여지지  않을것
         # exclude = ("created",)
