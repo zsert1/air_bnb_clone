@@ -33,6 +33,3 @@ class RoomDetailSerializer(ModelSerializer):
     class Meta:
         model = Room
         fields = "__all__"
-
-    def create(self, validated_data):
-        return Room.objects.create(**validated_data)
