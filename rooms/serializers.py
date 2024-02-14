@@ -16,19 +16,18 @@ class AmenitySerializer(serializers.ModelSerializer):
 
 class RoomListSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
-        fields = (
-            "name",
-            "country",
-            "city",
-            "price",
-            "rating",
-        )
+        fields = ("name", "country", "city", "price", "rating", "is_owner")
 
     def get_rating(self, room):
         return room.rating()
+
+    def get_is_owner(self, room):
+        request = self.context["request"]
+        return room.owner == request.user
 
 
 class RoomDetailSerializer(serializers.ModelSerializer):
@@ -36,6 +35,7 @@ class RoomDetailSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
     rating = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
@@ -43,4 +43,9 @@ class RoomDetailSerializer(serializers.ModelSerializer):
 
     # SerializerMethodField를 읽어 올떄  이름 앞에 반드시 get_를 붙여야한다
     def get_rating(self, room):
+
         return room.rating()
+
+    def get_is_owner(self, room):
+        request = self.context["request"]
+        return room.owner == request.user
