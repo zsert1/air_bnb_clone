@@ -11,6 +11,7 @@ from rest_framework.exceptions import (
 from rest_framework.status import HTTP_204_NO_CONTENT
 from categories.models import Category
 from django.db import transaction
+from reviews.seriailzers import ReviewSerialzers
 
 
 class Amenities(APIView):
@@ -156,3 +157,27 @@ class RoomDetail(APIView):
             raise PermissionDenied
         room.delete()
         return Response(status=HTTP_204_NO_CONTENT)
+
+
+class RoomReviews(APIView):
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Room.DoesNotExist:
+            raise NotFound
+
+    def get(self, requset, pk):
+        try:
+            page = requset.query_params.get("page", 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 3
+        start = (page - 1) * page_size
+        end = start + page_size
+        room = self.get_object(pk)
+        serializer = ReviewSerialzers(
+            room.reviews.all()[start:end],
+            many=True,
+        )
+        return Response(serializer.data)
