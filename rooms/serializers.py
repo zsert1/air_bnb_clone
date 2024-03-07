@@ -3,6 +3,7 @@ from .models import Amenity, Room
 from users.serializer import TinyUserSerializer
 from categories.serializers import CategorySerializer
 from reviews.seriailzers import ReviewSerialzers
+from medias.serializers import PhotoSerializers
 
 
 class AmenitySerializer(serializers.ModelSerializer):
@@ -37,6 +38,7 @@ class RoomDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     rating = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+    photos = PhotoSerializers(many=True, read_only=True)
 
     class Meta:
         model = Room
