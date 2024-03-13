@@ -8,6 +8,7 @@ from rest_framework.exceptions import (
     NotAuthenticated,
     ParseError,
 )
+from django.utils import timezone
 from rest_framework.status import HTTP_204_NO_CONTENT
 from categories.models import Category
 from django.db import transaction
@@ -15,6 +16,8 @@ from reviews.seriailzers import ReviewSerialzers
 from django.conf import settings
 from medias.serializers import PhotoSerializers
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from bookings.models import Booking
+from bookings.serializers import PublicBookingSerializers
 
 
 class Amenities(APIView):
@@ -215,3 +218,25 @@ class RoomPhotos(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
+
+class RoombBookings(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except:
+            raise NotFound
+
+    def get(self, request, pk):
+        room = self.get_object(pk)
+        now = timezone.localtime(timezone.now()).date()
+        bookings = Booking.objects.filter(
+            room=room,
+            kind=Booking.BookingKindChoices.ROOM,
+            check_in__gt=now,
+        )
+        serializers = PublicBookingSerializers(bookings, many=True)
+
+        return Response(serializers.data)
