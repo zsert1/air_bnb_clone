@@ -32,6 +32,16 @@ class CreateRoomSerializers(serializers.ModelSerializer):
             raise serializers.ValidationError("현재보다 과거는 예약이 안됩니다.")
         return value
 
+    def validate(self, data):
+        if data["check_out"] <= data["check_in"]:
+            raise serializers.ValidationError("퇴실 날짜가 입실 날짜보다 뒤여야 합니다")
+        if Booking.objects.filter(
+            check_in__gte=data["check_in"],
+            check_out__lte=data["check_out"],
+        ).exists():
+            raise serializers.ValidationError("해당 기간에 이미 예약이 있습니다")
+        return data
+
     class Meta:
         model = Booking
         fields = (
