@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.exceptions import (
     PermissionDenied,
     NotFound,
-    NotAuthenticated,
     ParseError,
 )
 from django.utils import timezone
@@ -17,7 +16,7 @@ from django.conf import settings
 from medias.serializers import PhotoSerializers
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from bookings.models import Booking
-from bookings.serializers import PublicBookingSerializers
+from bookings.serializers import PublicBookingSerializers, CreateRoomSerializers
 
 
 class Amenities(APIView):
@@ -240,3 +239,13 @@ class RoombBookings(APIView):
         serializers = PublicBookingSerializers(bookings, many=True)
 
         return Response(serializers.data)
+
+    def post(self, request, pk):
+        room = self.get_object(pk)
+        serializers = CreateRoomSerializers(data=request.data)
+        if serializers.is_valid():
+            return Response({"OK": True})
+
+            pass
+        else:
+            return Response(serializers.errors)
