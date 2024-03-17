@@ -244,8 +244,10 @@ class RoombBookings(APIView):
         room = self.get_object(pk)
         serializers = CreateRoomSerializers(data=request.data)
         if serializers.is_valid():
-            return Response({"OK": True})
-
-            pass
+            booking = serializers.save(
+                room=room, user=request.user, kind=Booking.BookingKindChoices.ROOM
+            )
+            serializer = PublicBookingSerializers(booking)
+            return Response(serializer.data)
         else:
             return Response(serializers.errors)

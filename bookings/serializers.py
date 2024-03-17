@@ -33,6 +33,13 @@ class CreateRoomSerializers(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
+        print(data)
+        print(
+            Booking.objects.filter(
+                check_out__lte=data["check_out"],
+                check_in__gte=data["check_in"],
+            )
+        )
         if data["check_out"] <= data["check_in"]:
             raise serializers.ValidationError("퇴실 날짜가 입실 날짜보다 뒤여야 합니다")
         if Booking.objects.filter(
